@@ -1,0 +1,19 @@
+{
+    "name": "pmartelletti/flight-tracker",
+    "description": "Simple Application to find cheap flights",
+    "require": {
+        "symfony/console": "^3.1",
+        "nesbot/carbon": "^1.21",
+        "guzzlehttp/guzzle": "^6.2",
+        "symfony/var-dumper": "^3.1"
+    },
+    "authors": [
+        {
+            "name": "Pablo Martelletti",
+            "email": "pmartelletti@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"FlightTracker\\": "src/"}
+    }
+}
