@@ -9,6 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Carbon\Carbon;
+use FlightTracker\Service\Skyscanner;
 
 class FlightTrackerCommand extends Command
 {
@@ -64,7 +65,7 @@ class FlightTrackerCommand extends Command
         foreach($dates as $date) {
             $currentStart = Carbon::instance($date);
             $currentEnd = $currentStart->copy()->addDays($duration);
-            dump($currentStart, $currentEnd);
+            $this->findTripOptions($departure, 'BCN', $currentStart, $currentEnd);
         }
     }
 
@@ -73,7 +74,8 @@ class FlightTrackerCommand extends Command
     **/
     private function findTripOptions($departure, $return, $from, $to)
     {
-        // TODO: add conditions?
+        $tracker = new Skyscanner('pa348514742769890312717552238498');
+        $tracker->startSession($departure, $return, $from, $to);
     }
 
     private function satifiesTripConditions($data)
