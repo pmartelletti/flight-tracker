@@ -10,6 +10,10 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Carbon\Carbon;
 use FlightTracker\Service\Skyscanner;
+use FlightTracker\Model\SuitableItineraries;
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableCell;
+use Symfony\Component\Console\Helper\TableSeparator;
 
 class FlightTrackerCommand extends Command
 {
@@ -17,6 +21,12 @@ class FlightTrackerCommand extends Command
     protected $output;
     protected $trips;
     protected $conditions;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->trips = new SuitableItineraries();
+    }
 
     protected function configure()
     {
@@ -53,6 +63,8 @@ class FlightTrackerCommand extends Command
         // TODO: ask departure city maybe?
         $departure = "MLA";
         $this->findBestOptions($departure, $dayOfWeek, $duration, $howFar);
+        // draw table!
+        $this->drawResultsTable();
     }
 
     private function findBestOptions($departure, $dayOfWeek, $duration, $howFar)
@@ -75,7 +87,28 @@ class FlightTrackerCommand extends Command
     private function findTripOptions($departure, $return, $from, $to)
     {
         $tracker = new Skyscanner('pa348514742769890312717552238498');
-        $tracker->startSession($departure, $return, $from, $to);
+        $tracker->trackFlights($departure, $return, $from, $to);
+        foreach($tracker->getSuitableItineraries() as $trip) {
+            $this->trips->addIfBetter($trip);
+        }
+    }
+
+    private function drawResultsTable()
+    {
+        $table = new Table($this->output);
+        $table
+            ->setHeaders(array('From', 'To', 'Departure', 'Arrival', 'Duration (hs)', 'Stops'))
+        ;
+        $rows = [];
+        foreach($this->trips as $trip) {
+            $rows[] = $trip->getOutbound()->getArrayDetails();
+            $rows[] = $trip->getInbound()->getArrayDetails();
+            $rows[] = array(new TableCell('Price: EUR' . $trip->getPrice(), array('colspan' => 6)));
+            // $rows[] = array(new TableCell('Booking Link: ' . $trip->getBookingLinks(), array('colspan' => 3)));
+            $rows[] = new TableSeparator();
+        }
+        $table->addRows($rows);
+        $table->render();
     }
 
     private function satifiesTripConditions($data)
