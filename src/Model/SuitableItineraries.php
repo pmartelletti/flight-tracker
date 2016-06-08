@@ -11,7 +11,7 @@ class SuitableItineraries implements \IteratorAggregate
     public function __construct()
     {
         $this->itineraries = [];
-        $this->maxResults = 10;
+        $this->maxResults = 20;
     }
 
     public function getIterator() {

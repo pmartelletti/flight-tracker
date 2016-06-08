@@ -87,7 +87,9 @@ class Skyscanner
         $outbound = new Flight($from, $to, new Carbon($outboundLeg['Departure']), new Carbon( $outboundLeg['Arrival']), $outboundLeg['Duration'] / 60, count($outboundLeg['Stops']));
         $inbound = new Flight($to, $from, new Carbon($inboundLeg['Departure']), new Carbon( $inboundLeg['Arrival']), $inboundLeg['Duration'] / 60, count($inboundLeg['Stops']));
         $itinerary = new Itinerary($outbound, $inbound, $itineray['PricingOptions'][0]['Price']);
-        $itinerary->addBookingLink($itineray['PricingOptions'][0]['DeeplinkUrl']);
+        if(array_key_exists('DeeplinkUrl', $itineray['PricingOptions'][0])) {
+            $itinerary->addBookingLink($itineray['PricingOptions'][0]['DeeplinkUrl']);
+        }
         $this->suitableItineraries->addIfBetter($itinerary);
     }
 

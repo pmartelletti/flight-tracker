@@ -77,7 +77,11 @@ class FlightTrackerCommand extends Command
         foreach($dates as $date) {
             $currentStart = Carbon::instance($date);
             $currentEnd = $currentStart->copy()->addDays($duration);
-            $this->findTripOptions($departure, 'BCN', $currentStart, $currentEnd);
+            $destinations = ['BCN', 'MAD', 'PAR', 'LON', 'DUB', 'VLC', 'ATH', 'ROM'];
+            // $destinations = ['MAD', 'PAR', 'LON', 'DUB', 'VLC'];
+            foreach($destinations as $destination) {
+                $this->findTripOptions($departure, $destination, $currentStart, $currentEnd);
+            }
         }
     }
 
