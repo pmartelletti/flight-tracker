@@ -17,7 +17,7 @@ class Skyscanner
     {
         $this->apiKey = $key;
         $this->baseUri = 'http://partners.api.skyscanner.net/apiservices/pricing/v1.0';
-        $this->suitableItineraries = new SuitableItineraries();
+        $this->suitableItineraries = new SuitableItineraries(2);
     }
 
     public function trackFlights($origin, $destination, Carbon $from, Carbon $to)
@@ -42,7 +42,7 @@ class Skyscanner
             $url = $headers['Location'][0];
             $queryParams = [
                 'apiKey' => $this->apiKey,
-                'duration' => 400, // max 5 hours of travelling. @TODO: make it configurable
+                'duration' => 180, // max 5 hours of travelling. @TODO: make it configurable
                 // 'outbounddepartstarttime' => '18:30', // departure time. @TODO: make it configurable,
                 // 'stops' => 1, // max stops allowed. @TODO: make it configurable
                 // 'pageindex' => 0,

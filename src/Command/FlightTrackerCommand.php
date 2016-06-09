@@ -61,7 +61,8 @@ class FlightTrackerCommand extends Command
         // $this->parseConditions();
         // DEPARTURE City
         // TODO: ask departure city maybe?
-        $departure = "MLA";
+        $question = new Question('What is your departure city? : ');
+        $departure = $helper->ask($input, $output, $question);
         $this->findBestOptions($departure, $dayOfWeek, $duration, $howFar);
         // draw table!
         $this->drawResultsTable();
@@ -71,15 +72,16 @@ class FlightTrackerCommand extends Command
     {
 
         $this->output->writeln(sprintf('<comment>Searching <info>%s days</info> flights from <info>%s</info> departing <info>every %s</info> for the next <info>%s weeks.</info>', $duration, $departure, $dayOfWeek, $howFar));
+        $destinations = ['BCN', 'MAD', 'PAR', 'LON', 'DUB', 'VLC', 'ATH', 'ROM', 'MLA', 'MIL', 'CTA'];
+        $this->output->writeln(sprintf('<comment>Looking for tickets to the following destinations: <info>%s</info>', implode(', ', $destinations)));
         $start = new Carbon('next ' . $dayOfWeek);
         $end = $start->copy()->addWeeks($howFar);
         $dates = new \DatePeriod($start, new \DateInterval( 'P1W'), $end);
         foreach($dates as $date) {
             $currentStart = Carbon::instance($date);
             $currentEnd = $currentStart->copy()->addDays($duration);
-            $destinations = ['BCN', 'MAD', 'PAR', 'LON', 'DUB', 'VLC', 'ATH', 'ROM'];
-            // $destinations = ['MAD', 'PAR', 'LON', 'DUB', 'VLC'];
             foreach($destinations as $destination) {
+                if($destination == $departure) continue;
                 $this->findTripOptions($departure, $destination, $currentStart, $currentEnd);
             }
         }
