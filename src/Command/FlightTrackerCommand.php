@@ -80,10 +80,8 @@ class FlightTrackerCommand extends Command
         foreach($dates as $date) {
             $currentStart = Carbon::instance($date);
             $currentEnd = $currentStart->copy()->addDays($duration);
-            foreach($destinations as $destination) {
-                if($destination == $departure) continue;
-                $this->findTripOptions($departure, $destination, $currentStart, $currentEnd);
-            }
+            $destination = 'anywhere';
+            $this->findTripOptions($departure, $destination, $currentStart, $currentEnd);
         }
     }
 
@@ -109,7 +107,7 @@ class FlightTrackerCommand extends Command
         foreach($this->trips as $trip) {
             $rows[] = $trip->getOutbound()->getArrayDetails();
             $rows[] = $trip->getInbound()->getArrayDetails();
-            $rows[] = array(new TableCell('Price: EUR' . $trip->getPrice(), array('colspan' => 6)));
+            $rows[] = array(new TableCell('Price: EUR ' . $trip->getPrice(), array('colspan' => 6)));
             // $rows[] = array(new TableCell('Booking Link: ' . $trip->getBookingLinks(), array('colspan' => 3)));
             $rows[] = new TableSeparator();
         }

@@ -16,11 +16,21 @@ class Skyscanner
     public function __construct($key = '')
     {
         $this->apiKey = $key;
-        $this->baseUri = 'http://partners.api.skyscanner.net/apiservices/pricing/v1.0';
-        $this->suitableItineraries = new SuitableItineraries(2);
+        // $this->baseUri = 'http://partners.api.skyscanner.net/apiservices/pricing/v1.0';
+        $this->baseUri = 'http://partners.api.skyscanner.net/apiservices/browseroutes/v1.0/GB/GBP/en-GB';
+        $this->suitableItineraries = new SuitableItineraries(1);
     }
 
     public function trackFlights($origin, $destination, Carbon $from, Carbon $to)
+    {
+        $client = new Client();
+        $url = sprintf('%s/%s/%s/%s/%s?apiKey=%s', $this->baseUri, $origin, $destination, $from->format('Y-m-d'), $to->format('Y-m-d'), $this->apiKey);
+        $response = $client->request('GET', $url);
+        $json_results = json_decode((string) $response->getBody(), true);
+        dump($json_results); die;
+    }
+
+    public function trackFlights2($origin, $destination, Carbon $from, Carbon $to)
     {
         $client = new Client();
         $params = [
